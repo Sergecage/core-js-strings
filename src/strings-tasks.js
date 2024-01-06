@@ -20,7 +20,8 @@
  *   getStringLength(undefined) => 0
  */
 function getStringLength(value) {
-  return value.length;
+  if (value) return value.length;
+  return 0;
 }
 
 /**
@@ -54,7 +55,7 @@ function isString(value) {
  *   concatenateStrings('', 'bb') => 'bb'
  */
 function concatenateStrings(value1, value2) {
-  return value1 + value2;
+  return value1.concat('', value2);
 }
 
 /**
@@ -131,7 +132,7 @@ function removeTrailingWhitespaces(value) {
  *   repeatString('abc', -2) => ''
  */
 function repeatString(str, times) {
-  return str.repeat(times);
+  return times < 0 ? '' : str.repeat(times);
 }
 
 /**
@@ -147,7 +148,10 @@ function repeatString(str, times) {
  *   removeFirstOccurrences('ABABAB', 'BA') => 'ABAB'.
  */
 function removeFirstOccurrences(str, value) {
-  return str.replace(value, '');
+  return str.indexOf(value) > -1
+    ? str.slice(0, str.indexOf(value)) +
+        str.slice(str.indexOf(value) + value.length)
+    : str;
 }
 
 /**
@@ -163,7 +167,10 @@ function removeFirstOccurrences(str, value) {
  *   removeLastOccurrences('ABABAB', 'BA') => 'ABAB'.
  */
 function removeLastOccurrences(str, value) {
-  return  str.slice(0, str.lastIndexOf(value));
+  return str.lastIndexOf(value) > -1
+    ? str.slice(0, str.lastIndexOf(value)) +
+        str.slice(str.lastIndexOf(value) + value.length)
+    : str;
 }
 
 /**
@@ -179,9 +186,9 @@ function removeLastOccurrences(str, value) {
  *   sumOfCodes() => 0
  */
 function sumOfCodes(str) {
-  if (str){
+  if (str) {
     let sumOfChar = 0;
-    for ( i = 0; i < str.length; i += 1 ){
+    for (let i = 0; i < str.length; i += 1) {
       sumOfChar += str.charCodeAt(i);
     }
     return sumOfChar;
@@ -235,7 +242,7 @@ function endsWith(str, substr) {
 function formatTime(minutes, seconds) {
   const minute = minutes.toString();
   const secon = seconds.toString();
-  return `${minute.padStart(2,0)}:${secon.padStart(2,0)}`;
+  return `${minute.padStart(2, 0)}:${secon.padStart(2, 0)}`;
 }
 
 /**
@@ -249,7 +256,7 @@ function formatTime(minutes, seconds) {
  *   reverseString('12345') => '54321'
  */
 function reverseString(str) {
-  return str.split("").reverse().join("");
+  return str.split('').reverse().join('');
 }
 
 /**
@@ -264,7 +271,7 @@ function reverseString(str) {
  *   orderAlphabetically('abc123xyz') => '123abcxyz'
  */
 function orderAlphabetically(str) {
-  return str.split('').sort().join("");
+  return str.split('').sort().join('');
 }
 
 /**
@@ -300,8 +307,8 @@ function containsSubstring(str, substring) {
 function countVowels(str) {
   const arr = ['a', 'e', 'i', 'o', 'u', 'y', 'A', 'E', 'I', 'O', 'U', 'Y'];
   let total = 0;
-  for ( i = 0; i < str.length; i += 1) {
-    if ( arr.includes(str[i])){
+  for (let i = 0; i < str.length; i += 1) {
+    if (arr.includes(str[i])) {
       total += 1;
     }
   }
@@ -323,7 +330,7 @@ function countVowels(str) {
  */
 function isPalindrome(str) {
   const sourceStr = str.toLowerCase().replace(/[^a-zA-Z]/g, '');
-  const reversedSTR = sourceStr.split('').reverse().join("");
+  const reversedSTR = sourceStr.split('').reverse().join('');
   if (sourceStr === reversedSTR) {
     return true;
   }
@@ -343,14 +350,14 @@ function isPalindrome(str) {
  *   findLongestWord('No words here') => 'words'
  */
 function findLongestWord(sentence) {
-  const arr = sentence.split(" ");
-  let longestWord = "";
-  for ( i = 0; i < arr.length; i += 1){
+  const arr = sentence.split(' ');
+  let longestWord = '';
+  for (let i = 0; i < arr.length; i += 1) {
     if (arr[i].length > longestWord.length) {
       longestWord = arr[i];
     }
   }
-  return  longestWord;
+  return longestWord;
 }
 
 /**
@@ -364,7 +371,10 @@ function findLongestWord(sentence) {
  *   reverseWords('The Quick Brown Fox') => 'ehT kciuQ nworB xoF'
  */
 function reverseWords(str) {
-  return str.split(" ").map((el) => el.split("").reverse().join("")).join(" ");
+  return str
+    .split(' ')
+    .map((el) => el.split('').reverse().join(''))
+    .join(' ');
 }
 
 /**
@@ -379,13 +389,17 @@ function reverseWords(str) {
  *   invertCase('12345') => '12345'
  */
 function invertCase(str) {
-  return str.split(' ').map((el) => el.split("").map((elem) => elem === elem.toLowerCase() 
-  ? elem.toUpperCase()
-  : elem.toLowerCase()
-   )
-   .join("")
-   )
-   .join(' ');
+  return str
+    .split(' ')
+    .map((el) =>
+      el
+        .split('')
+        .map((elem) =>
+          elem === elem.toLowerCase() ? elem.toUpperCase() : elem.toLowerCase()
+        )
+        .join('')
+    )
+    .join(' ');
 }
 
 /**
@@ -402,7 +416,7 @@ function invertCase(str) {
  *   getStringFromTemplate('Chuck','Norris') => 'Hello, Chuck Norris!'
  */
 function getStringFromTemplate(firstName, lastName) {
-  return `Hello, ${firstName} ${lastName}`;
+  return `Hello, ${firstName} ${lastName}!`;
 }
 
 /**
@@ -450,7 +464,7 @@ function unbracketTag(str) {
  *   'info@gmail.com' => ['info@gmail.com']
  */
 function extractEmails(str) {
-  return str.split(";");
+  return str.split(';');
 }
 
 /**
@@ -470,7 +484,21 @@ function extractEmails(str) {
  *
  */
 function encodeToRot13(str) {
-  ;
+  const sourceLang = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const encodedLang = 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm';
+
+  return str
+    .split('')
+    .map((el) => {
+      let targetLang = '';
+      if (sourceLang.includes(el)) {
+        targetLang = encodedLang[sourceLang.indexOf(el)];
+      } else {
+        targetLang = el;
+      }
+      return targetLang;
+    })
+    .join('');
 }
 
 /**
@@ -497,8 +525,63 @@ function encodeToRot13(str) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const cards = [
+    'A♣',
+    '2♣',
+    '3♣',
+    '4♣',
+    '5♣',
+    '6♣',
+    '7♣',
+    '8♣',
+    '9♣',
+    '10♣',
+    'J♣',
+    'Q♣',
+    'K♣',
+    'A♦',
+    '2♦',
+    '3♦',
+    '4♦',
+    '5♦',
+    '6♦',
+    '7♦',
+    '8♦',
+    '9♦',
+    '10♦',
+    'J♦',
+    'Q♦',
+    'K♦',
+    'A♥',
+    '2♥',
+    '3♥',
+    '4♥',
+    '5♥',
+    '6♥',
+    '7♥',
+    '8♥',
+    '9♥',
+    '10♥',
+    'J♥',
+    'Q♥',
+    'K♥',
+    'A♠',
+    '2♠',
+    '3♠',
+    '4♠',
+    '5♠',
+    '6♠',
+    '7♠',
+    '8♠',
+    '9♠',
+    '10♠',
+    'J♠',
+    'Q♠',
+    'K♠',
+  ];
+
+  return cards.indexOf(value);
 }
 
 module.exports = {
